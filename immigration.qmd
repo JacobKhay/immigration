@@ -1,0 +1,15 @@
+---
+title: "XX"
+format: html
+author: "Jacob Khaykin"
+execute: 
+  echo: false
+---
+
+
+```{r}
+#| message: false
+library(tidyverse)
+library(primer.data)
+```
+Public opinion on immigration is shaped by many factors, including personal characteristics and external influences. Using data from a voter study conducted in Germany in 2016 with thousands of observations, we examine whether receiving an immigration-related message affects attitudes toward immigration.
