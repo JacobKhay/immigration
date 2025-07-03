@@ -11,5 +11,40 @@ execute:
 #| message: false
 library(tidyverse)
 library(primer.data)
+library(tidymodels)
+library(broom)
 ```
-Public opinion on immigration is shaped by many factors, including personal characteristics and external influences. Using data from a voter study conducted in Germany in 2016 with thousands of observations, we examine whether receiving an immigration-related message affects attitudes toward immigration.
+Public opinion on immigration is shaped by many factors, including personal characteristics and external influences. Using data from a voter study conducted in Germany in 2016 with thousands of observations, we examine whether receiving an immigration-related message affects attitudes toward immigration. One potential weakness in our model is that voters in Boston in 2012 may not represent current attitudes in Georgia, limiting the relevance of our findings. We model immigration attitudes, measured on a continuous scale, as a linear function of whether or not a voter received the treatment involving exposure to Spanish speakers.
+
+
+$$
+Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_k X_k
+$$
+$$
+\hat{att\_end} = 5.3 + 0.4 \cdot treatment
+$$
+
+```{r}
+#| cache: true
+fit_att <- linear_reg(engine = "lm") |>
+  fit(att_end ~ treatment, data = trains)
+```
+
+```{r}
+#| cache: true
+library(gt)
+
+fit_att |>
+  tidy(conf.int = TRUE) |>
+  select(term, estimate, conf.low, conf.high) |>
+  gt() |>
+  tab_header(
+    title = "Effect of Treatment on Immigration Attitudes",
+    subtitle = "Linear regression estimates with 95% confidence intervals"
+  ) |>
+  fmt_number(
+    columns = c(estimate, conf.low, conf.high),
+    decimals = 2
+  )
+
+```
