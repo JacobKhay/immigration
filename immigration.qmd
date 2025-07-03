@@ -13,8 +13,11 @@ library(tidyverse)
 library(primer.data)
 library(tidymodels)
 library(broom)
+library(marginaleffects)
 ```
-Public opinion on immigration is shaped by many factors, including personal characteristics and external influences. Using data from a voter study conducted in Germany in 2016 with thousands of observations, we examine whether receiving an immigration-related message affects attitudes toward immigration. One potential weakness in our model is that voters in Boston in 2012 may not represent current attitudes in Georgia, limiting the relevance of our findings. We model immigration attitudes, measured on a continuous scale, as a linear function of whether or not a voter received the treatment involving exposure to Spanish speakers.
+Public opinion on immigration is shaped by many factors, including personal characteristics and external influences. Using data from a voter study conducted in Germany in 2016 with thousands of observations, we examine whether receiving an immigration-related message affects attitudes toward immigration. One potential weakness in our model is that voters in Boston in 2012 may not represent current attitudes in Georgia, limiting the relevance of our findings. We model immigration attitudes, measured on a continuous scale, as a linear function of whether or not a voter received the treatment involving exposure to Spanish speakers. We estimate that the treatment increases immigration attitude scores by 1.55 points on average, with a 95% confidence interval ranging from 0.51 to 2.58 points. The estimates might be wrong if the sample is not representative of the broader voter population or if the treatment had different effects across subgroups not accounted for. Measurement error in the outcome variable or imbalance in covariates could also distort the results. An alternative estimate might be closer to 1.2 with a wider confidence interval, such as 0.2 to 2.2, to reflect greater uncertainty.
+
+
 
 
 $$
@@ -46,5 +49,22 @@ fit_att |>
     columns = c(estimate, conf.low, conf.high),
     decimals = 2
   )
+
+```
+
+```{r}
+trains |>
+  mutate(treatment = if_else(treatment == "Treated", "Treated", "Control")) |>
+  ggplot(aes(x = treatment, y = att_end, fill = treatment)) +
+  geom_boxplot(alpha = 0.7, color = "black") +
+  labs(
+    title = "Effect of Treatment on Immigration Attitudes",
+    subtitle = "Treated voters show higher immigration attitude scores on average",
+    x = "Treatment Group",
+    y = "Immigration Attitude Score",
+    caption = "Source: 2012 Boston Commuter Experiment"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
 
 ```
